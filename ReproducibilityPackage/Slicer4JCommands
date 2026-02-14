@@ -1,0 +1,52 @@
+Commands for slicer4J
+
+AcctMnger
+
+python3 slicer4j-fixed.py \
+  -j repos/acctManager3/target/account-manager-1.0.0.jar \
+  -m "com.acctmgr.DeadlockDemo" \
+  -b "DeadlockDemo.java:28" \
+  -o slicing_output_main
+
+
+python3 slicer4j.py \
+    --jar acctMgrAutoGen/build/libs/acctMgrAutoGen-1.0-SNAPSHOT.jar \
+    --out_dir slices/transfer_deadlock_analysis/ \
+    --backward-criterion "acctMgr.model.Account:95" \
+    --backward-criterion "acctMgr.model.Account:113" \
+    --backward-criterion "acctMgr.model.Account:114" \
+    --backward-criterion "acctMgr.model.Account:122" \
+    --backward-criterion "acctMgr.model.Account:123" \
+    --variables "first,second,cmp,this.ID,target.ID,this.balance,target.balance,amount,newBalance" \
+    --main-class "acctMgr.test.TransferDeadlockTest"
+
+
+python3 slicer4j.py \
+  --jar repos/DeadlockDemo.jar \
+  --out_dir slices/deadlock_part1/ \
+  --backward-criterion "com.javacreed.examples.deadlock.part1.Example1:48" \
+  --variables "list,threadA,threadB" \
+  --main-class "com.javacreed.examples.deadlock.part1.Example1"
+
+Number of Jimple statements: 367 
+
+
+SliceMe
+	Slicer4J: 5 lines
+	LLM Tool: 40
+
+
+AcctManager3 (v2)
+	Example of independent slicer not capturing all paths
+
+python3 slicer4j-fixed.py \
+  -j target/account-manager-1.0.0.jar \
+  -tc "com.acctmgr.TransferDeadlockTest" \
+  -tm "testBasicTransfer" \
+  -b "TransferDeadlockTest.java:61" \
+  -o slicing_output_test
+
+	Slicer4J: 180
+
+
+
