@@ -1,0 +1,51 @@
+Tools used:
+Perplexity.ai - LLM for semantic slicing and dependency detection.
+Jasmin - JVM bytecode assembler for validating slices
+Slicer4J - Dynamic slicing tool for Java programs
+
+LLM Slice Generation Process
+The first task we accomplished was using an LLM to read a repository with a possible deadlock and generate a minimal executable slice, only keeping what is necessary for running a deadlock test.
+
+LLM-Based Slice Creation
+Prompt provided to perplexity.ai gave instructions to create a Jasmin-compatible bytecode slice that only keeps what is required to run the deadlock test
+The LLM generated a minimal executable slice by stripping unnecessary classes, fields, and statements
+Validation
+Added redundant classes and computations to the repository and confirmed that the LLM-generated slice excluded them
+Used Jasmin to generate opcodes and verified that the slice was executable
+Automation
+Developed a tool that automates passing a repository and slicing criterion to Perplexity.ai and generating the bytecode slice
+
+Case Study & Theories
+Theory #1:
+LLM-based semantic slicing produces smaller slices than traditional slicers because it understands semantic dependencies.
+Experiment:
+Repository Used: acctManager3
+Account manager with multi-threaded access to shared instances of account
+Slicer4J slice size: 644 statements
+LLM slice size: 81 statements
+
+
+
+
+Theory #2: If the LLM slice is larger, it’s because static analysis includes all possible paths, unlike dynamic slicers that only capture observed paths.
+
+Experiment:
+Modified code to include latent deadlock paths
+LLM slice includes unused but risky paths
+More comprehensive for bug discovery
+
+
+Static analysis (LLM) considers all possible paths and can identify latent deadlock risks even if no test currently exercises them.
+
+Visual Comparison of Control Flow
+
+
+Figure:
+Left: Dynamic Slice (Slicer4J) – Includes only observed paths during execution.
+Right: Static Slice (LLM) – Includes all possible paths, even those not triggered by tests.
+
+Key Insight
+Slicer4J will never include deadlock-prone or rare paths unless the specific test case triggers them.
+LLM static slice includes all paths relevant to concurrency, so it is more comprehensive for bug/danger discovery.
+
+
